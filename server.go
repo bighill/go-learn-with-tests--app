@@ -49,12 +49,12 @@ func (p *PlayerServer) processWin(w http.ResponseWriter, player string) {
 }
 
 func (s *StubPlayerStore) GetPlayerScore(name string) int {
-	s.mu.Lock()
-	defer s.mu.Unlock()
 	score := s.scores[name]
 	return score
 }
 
 func (s *StubPlayerStore) RecordWin(name string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	s.winCalls = append(s.winCalls, name)
 }
