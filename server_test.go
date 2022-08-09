@@ -8,6 +8,23 @@ import (
 	"testing"
 )
 
+type StubPlayerStore struct {
+	mu       sync.Mutex
+	scores   map[string]int
+	winCalls []string
+}
+
+func (s *StubPlayerStore) GetPlayerScore(name string) int {
+	score := s.scores[name]
+	return score
+}
+
+func (s *StubPlayerStore) RecordWin(name string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.winCalls = append(s.winCalls, name)
+}
+
 func TestGETPlayers(t *testing.T) {
 	store := StubPlayerStore{
 		sync.Mutex{},
@@ -76,22 +93,6 @@ func TestStoreWins(t *testing.T) {
 			t.Errorf("did not store correct winner got %q want %q", store.winCalls[0], player)
 		}
 	})
-}
-
-func TestRecordingWinsAndRetrievingThem(t *testing.T) {
-	store := NewInMemoryPlayerStore()
-	server := PlayerServer{store}
-	player := "Pepper"
-
-	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
-	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
-	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
-
-	response := httptest.NewRecorder()
-	server.ServeHTTP(response, newGetScoreRequest(player))
-	assertStatus(t, response.Code, http.StatusOK)
-
-	assertResponseBody(t, response.Body.String(), "3")
 }
 
 func newGetScoreRequest(name string) *http.Request {
