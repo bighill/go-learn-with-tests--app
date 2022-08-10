@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	server := &PlayerServer{NewInMemoryPlayerStore()}
+	server := NewPlayerServer(NewInMemoryPlayerStore())
 
 	if err := http.ListenAndServe(":5555", server); err != nil {
 		log.Fatalf("Could not listen on port %v", err)
