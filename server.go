@@ -22,6 +22,8 @@ type Player struct {
 	Wins int
 }
 
+const jsonContentType = "application/json"
+
 func NewPlayerServer(store PlayerStore) *PlayerServer {
 	p := new(PlayerServer)
 	p.store = store
@@ -50,12 +52,6 @@ func (p *PlayerServer) playersHandler(w http.ResponseWriter, r *http.Request) {
 		p.showScore(w, player)
 	}
 }
-
-// func (p *PlayerServer) getLeagueTable() []Player {
-// 	return []Player{
-// 		{"Chris", 20},
-// 	}
-// }
 
 func (p *PlayerServer) showScore(w http.ResponseWriter, player string) {
 	score := p.store.GetPlayerScore((player))

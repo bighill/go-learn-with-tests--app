@@ -29,8 +29,6 @@ func (s *StubPlayerStore) GetLeague() []Player {
 	return s.league
 }
 
-const jsonContentType = "application/json"
-
 func TestGETPlayers(t *testing.T) {
 	store := StubPlayerStore{
 		map[string]int{
